@@ -8,26 +8,23 @@ import java.util.List;
 
 @Entity
 @Table(name = "authors")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Getter
+@Setter
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
-    private String authorName;
+    private String AuthorName;
 
     @Column(nullable = false)
     private String biography;
 
-
-
     @Column(nullable = false)
     private LocalDate birthDate;
-
 
     @Column(nullable = true)
     private LocalDate deathDate;

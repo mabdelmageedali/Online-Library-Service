@@ -8,15 +8,15 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Entity
 @Table(name = "books")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class Book {
 
     @Column(nullable = false)
     @Min(value = 1, message = "\"Page count must be at least 1")
-    private int pageCount;
+    private int pagesCount;
 
 
     @Column(nullable = false)
@@ -41,7 +41,7 @@ public class Book {
     private LocalDate publishDate;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

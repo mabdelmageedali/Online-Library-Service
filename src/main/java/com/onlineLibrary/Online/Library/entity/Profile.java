@@ -5,13 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "profile")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile {
@@ -35,7 +35,7 @@ public class Profile {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime joinDate;
+    private LocalDate joinDate;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true, nullable = false) // foreign key

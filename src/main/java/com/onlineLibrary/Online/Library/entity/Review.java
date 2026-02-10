@@ -3,9 +3,7 @@ package com.onlineLibrary.Online.Library.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -13,7 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reviews")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Review {
@@ -24,8 +23,8 @@ public class Review {
 
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
-    @Column(nullable = false)
-    private Integer rating;
+    @Column(nullable = true)
+    private int rating;
 
     @Column(nullable = true)
     private String comment;
