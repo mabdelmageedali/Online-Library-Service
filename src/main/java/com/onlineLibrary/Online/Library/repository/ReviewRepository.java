@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
@@ -16,6 +17,9 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     // Get reviews written by a user
     List<Review> findByUserId(Integer userId);
+
+    // Get review of user for specific book
+    Optional<Review> findByUserIdAndBookId(Integer userId, Integer bookId);
 
     // Check if user already reviewed this book
     Boolean existsByUserIdAndBookId(Integer userId, Integer bookId);
@@ -27,3 +31,4 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.book.id = :bookId")
     Double findAverageRatingByBookId(@Param("bookId") Integer bookId);
 }
+
