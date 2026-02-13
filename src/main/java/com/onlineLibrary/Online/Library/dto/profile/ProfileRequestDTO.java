@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @AllArgsConstructor
@@ -26,6 +26,6 @@ public class ProfileRequestDTO {
 
     @NotNull(message = "Birth date is required")
     @Past
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
 
 }

@@ -1,9 +1,6 @@
 package com.onlineLibrary.Online.Library.dto.user;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,7 @@ public class UserRegistrationDTO {
     private String phoneNumber;
 
     @NotBlank(message = "Password is required")
-    @Min(value = 6,message = "Password should be at least 6 characters")
+    @Size(min = 6,message = "Password should be at least 6 characters")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
             message = "Password must contain at least one digit, one lowercase, one uppercase, and one special character")
     private String password;

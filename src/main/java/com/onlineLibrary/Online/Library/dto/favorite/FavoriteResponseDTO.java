@@ -2,13 +2,11 @@ package com.onlineLibrary.Online.Library.dto.favorite;
 
 
 import com.onlineLibrary.Online.Library.dto.book.BookSummaryDTO;
-import jakarta.persistence.criteria.CriteriaBuilder;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record FavoriteResponseDTO(
         Integer id,
-        LocalDate addedAt,
+        LocalDateTime addedAt,
         BookSummaryDTO book
 ) {
 }

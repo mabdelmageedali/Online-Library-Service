@@ -4,6 +4,6 @@ public record BookSummaryDTO(
         Integer id,
         String title,
         String language,
-        int pagesCount
+        Integer pagesCount
 ) {
 }

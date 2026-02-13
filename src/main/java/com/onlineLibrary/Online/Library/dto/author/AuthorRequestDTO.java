@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,9 +23,9 @@ public class AuthorRequestDTO {
 
     @NotNull(message = "Author birth date is required")
     @Past(message = "Author birth date should be valid")
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
 
     @Past(message = "Author death date should be valid")
-    private LocalDate deathDate;
+    private LocalDateTime deathDate;
 
 }

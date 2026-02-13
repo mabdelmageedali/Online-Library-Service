@@ -1,6 +1,6 @@
 package com.onlineLibrary.Online.Library.dto.profile;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 public record ProfileResponseDTO(
@@ -8,7 +8,7 @@ public record ProfileResponseDTO(
         String firstName,
         String lastName,
         String biography,
-        LocalDate birthDate,
-        LocalDate joinDate
+        LocalDateTime birthDate,
+        LocalDateTime joinDate
 ) {
 }

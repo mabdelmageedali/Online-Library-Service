@@ -3,7 +3,7 @@ package com.onlineLibrary.Online.Library.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -18,16 +18,16 @@ public class Author {
     private Integer id;
 
     @Column(nullable = false)
-    private String AuthorName;
+    private String authorName;
 
     @Column(nullable = false)
     private String biography;
 
     @Column(nullable = false)
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
 
     @Column(nullable = true)
-    private LocalDate deathDate;
+    private LocalDateTime deathDate;
 
     @ManyToMany(mappedBy = "authors")
     @JsonBackReference

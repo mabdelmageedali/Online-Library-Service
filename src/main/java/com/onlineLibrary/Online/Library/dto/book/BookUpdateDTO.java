@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class BookUpdateDTO {
     private String title;
     private String description;
     private String language;
-    private int pagesCount;
-    private LocalDate publishDate;
+    private Integer pagesCount;
+    private LocalDateTime publishDate;
 
 }

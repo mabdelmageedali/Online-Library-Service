@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -33,15 +33,15 @@ public class Book {
 
     @Column(nullable = false)
     @Min(value = 1, message = "\"Page count must be at least 1")
-    private int pagesCount;
+    private Integer pagesCount;
 
 
     @Column(nullable = false)
     @PastOrPresent(message = "Publish date cannot be in the future")
-    private LocalDate publishDate;
+    private LocalDateTime publishDate;
 
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

@@ -13,4 +13,6 @@ import lombok.Setter;
 public class FavoriteRequestDTO {
     @NotNull(message = "Book ID is required")
     Integer bookId;
+
+    Integer userId;
 }

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -31,11 +31,11 @@ public class Profile {
 
     @Column(nullable = false)
     @Past(message = "Birth date must be in the past")
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDate joinDate;
+    private LocalDateTime joinDate;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true, nullable = false) // foreign key

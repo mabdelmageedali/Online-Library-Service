@@ -2,7 +2,8 @@ package com.onlineLibrary.Online.Library.dto.book;
 
 import com.onlineLibrary.Online.Library.dto.author.AuthorSummaryDTO;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record BookDetailsDTO(
@@ -10,10 +11,9 @@ public record BookDetailsDTO(
         String title,
         String description,
         String language,
-        int pagesCount,
-        LocalDate publishDate,
-        LocalDate updateDate,
+        Integer pagesCount,
+        LocalDateTime publishDate,
+        LocalDateTime updateDate,
         List<AuthorSummaryDTO> authors
-        // add here CategoryResponseDTO
 ) {
 }
