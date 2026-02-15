@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class ErrorResponse {

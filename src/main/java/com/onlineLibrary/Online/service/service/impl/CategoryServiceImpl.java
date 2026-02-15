@@ -1,6 +1,8 @@
 package com.onlineLibrary.Online.service.service.impl;
 
 import com.onlineLibrary.Online.service.entity.Category;
+import com.onlineLibrary.Online.service.exception.BadRequestException;
+import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.repository.CategoryRepository;
 import com.onlineLibrary.Online.service.service.CategoryService;
 
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @Transactional
@@ -22,27 +25,27 @@ public class CategoryServiceImpl implements CategoryService {
     public Category addCategory(Category category) {
 
         if (categoryRepository.existsByCategoryName(category.getCategoryName())) {
-            throw new RuntimeException("Category already exists");
+            throw new BadRequestException("Category already exists");
         }
 
         return categoryRepository.save(category);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Category> getCategoryById(Integer id) {
-
         return categoryRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Category> getAllCategories() {
-
         return categoryRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Category> searchCategories(String keyword) {
-
         return categoryRepository.findByCategoryNameContaining(keyword);
     }
 
@@ -50,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category updateCategory(Integer id, Category category) {
 
         Category oldCategory = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new NotFoundException("Category not found"));
 
         oldCategory.setCategoryName(category.getCategoryName());
         oldCategory.setCategoryDescription(category.getCategoryDescription());
@@ -62,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Integer id) {
 
         if (!categoryRepository.existsById(id)) {
-            throw new RuntimeException("Category not found");
+            throw new NotFoundException("Category not found");
         }
 
         categoryRepository.deleteById(id);

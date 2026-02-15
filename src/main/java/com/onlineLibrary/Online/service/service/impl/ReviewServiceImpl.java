@@ -4,6 +4,8 @@ package com.onlineLibrary.Online.service.service.impl;
 import com.onlineLibrary.Online.service.entity.Book;
 import com.onlineLibrary.Online.service.entity.Review;
 import com.onlineLibrary.Online.service.entity.User;
+import com.onlineLibrary.Online.service.exception.BadRequestException;
+import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.repository.BookRepository;
 import com.onlineLibrary.Online.service.repository.ReviewRepository;
 import com.onlineLibrary.Online.service.repository.UserRepository;
@@ -27,24 +29,19 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review addReview(Integer userId, Integer bookId, Review review) {
 
-        // Check if user exists
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // Check if book exists
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new NotFoundException("Book not found"));
 
-        // Check if user already reviewed this book
         if (reviewRepository.existsByUserIdAndBookId(userId, bookId)) {
-            throw new RuntimeException("You already reviewed this book");
+            throw new BadRequestException("You already reviewed this book");
         }
 
-        // Link review with user and book
         review.setUser(user);
         review.setBook(book);
 
-        // Save review
         return reviewRepository.save(review);
     }
 
@@ -54,9 +51,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review oldReview = reviewRepository
                 .findByUserIdAndBookId(userId, bookId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new NotFoundException("Review not found"));
 
-        // Update fields
         oldReview.setRating(review.getRating());
         oldReview.setComment(review.getComment());
 
@@ -68,7 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Integer userId, Integer bookId) {
 
         if (!reviewRepository.existsByUserIdAndBookId(userId, bookId)) {
-            throw new RuntimeException("Review not found");
+            throw new NotFoundException("Review not found");
         }
 
         reviewRepository.deleteByUserIdAndBookId(userId, bookId);
@@ -76,13 +72,19 @@ public class ReviewServiceImpl implements ReviewService {
 
     // Get all reviews for book
     @Override
+    @Transactional(readOnly = true)
     public List<Review> getBookReviews(Integer bookId) {
+
+        if (!bookRepository.existsById(bookId)) {
+            throw new NotFoundException("Book not found");
+        }
 
         return reviewRepository.findByBookId(bookId);
     }
 
     // Get all reviews by user
     @Override
+    @Transactional(readOnly = true)
     public List<Review> getUserReviews(Integer userId) {
 
         return reviewRepository.findByUserId(userId);
@@ -90,16 +92,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     // Get average rating
     @Override
+    @Transactional(readOnly = true)
     public Double getAverageRating(Integer bookId) {
+
+        if (!bookRepository.existsById(bookId)) {
+            throw new NotFoundException("Book not found");
+        }
 
         Double avg = reviewRepository.findAverageRatingByBookId(bookId);
 
-        // If no reviews
-        if (avg == null) {
-            return 0.0;
-        }
-
-        return avg;
+        return avg == null ? 0.0 : avg;
     }
 }
-

@@ -25,24 +25,16 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody User user) {
 
-        if (userService.isEmailTaken(user.getEmail())) {
-            throw new BadRequestException("Email already exists");
-        }
-
-        if (userService.isPhoneTaken(user.getPhoneNumber())) {
-            throw new BadRequestException("Phone number already exists");
-        }
-
         User savedUser = userService.register(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    // Login
     @PostMapping("/login")
     public ResponseEntity<User> login(
             @RequestParam String email,
             @RequestParam String password
+
     ) {
 
         User user = userService.login(email, password);

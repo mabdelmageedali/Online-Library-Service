@@ -2,6 +2,8 @@ package com.onlineLibrary.Online.service.service.impl;
 
 import com.onlineLibrary.Online.service.entity.Profile;
 import com.onlineLibrary.Online.service.entity.User;
+import com.onlineLibrary.Online.service.exception.BadRequestException;
+import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.repository.ProfileRepository;
 import com.onlineLibrary.Online.service.repository.UserRepository;
 import com.onlineLibrary.Online.service.service.ProfileService;
@@ -24,11 +26,11 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile createProfile(Integer userId, Profile profile) {
 
         if (profileRepository.existsByUserId(userId)) {
-            throw new RuntimeException("Profile already exists");
+            throw new BadRequestException("Profile already exists");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         profile.setUser(user);
 
@@ -36,6 +38,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Profile> getProfileByUserId(Integer userId) {
 
         return profileRepository.findByUserId(userId);
@@ -45,7 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile updateProfile(Integer userId, Profile profile) {
 
         Profile oldProfile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile not found"));
 
         oldProfile.setFirstName(profile.getFirstName());
         oldProfile.setLastName(profile.getLastName());
@@ -59,7 +62,7 @@ public class ProfileServiceImpl implements ProfileService {
     public void deleteProfile(Integer userId) {
 
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile not found"));
 
         profileRepository.delete(profile);
     }

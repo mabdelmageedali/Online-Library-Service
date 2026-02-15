@@ -3,6 +3,8 @@ package com.onlineLibrary.Online.service.service.impl;
 import com.onlineLibrary.Online.service.entity.Book;
 import com.onlineLibrary.Online.service.entity.Favorite;
 import com.onlineLibrary.Online.service.entity.User;
+import com.onlineLibrary.Online.service.exception.BadRequestException;
+import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.repository.BookRepository;
 import com.onlineLibrary.Online.service.repository.FavoriteRepository;
 import com.onlineLibrary.Online.service.repository.UserRepository;
@@ -27,14 +29,14 @@ public class FavoriteServiceImpl implements FavoriteService {
     public Favorite addToFavorites(Integer userId, Integer bookId) {
 
         if (favoriteRepository.existsByUserIdAndBookId(userId, bookId)) {
-            throw new RuntimeException("Already in favorites");
+            throw new BadRequestException("Already in favorites");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new NotFoundException("Book not found"));
 
         Favorite favorite = new Favorite();
         favorite.setUser(user);
@@ -47,19 +49,21 @@ public class FavoriteServiceImpl implements FavoriteService {
     public void removeFromFavorites(Integer userId, Integer bookId) {
 
         if (!favoriteRepository.existsByUserIdAndBookId(userId, bookId)) {
-            throw new RuntimeException("Favorite not found");
+            throw new NotFoundException("Favorite not found");
         }
 
         favoriteRepository.deleteByUserIdAndBookId(userId, bookId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Favorite> getUserFavorites(Integer userId) {
 
         return favoriteRepository.findByUserId(userId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean isBookFavorite(Integer userId, Integer bookId) {
 
         return favoriteRepository.existsByUserIdAndBookId(userId, bookId);

@@ -30,6 +30,7 @@ public class User {
     private String phoneNumber;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @CreationTimestamp

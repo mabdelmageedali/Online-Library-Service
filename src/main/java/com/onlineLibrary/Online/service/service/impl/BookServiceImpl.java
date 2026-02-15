@@ -1,6 +1,8 @@
 package com.onlineLibrary.Online.service.service.impl;
 
 import com.onlineLibrary.Online.service.entity.Book;
+import com.onlineLibrary.Online.service.exception.BadRequestException;
+import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.repository.BookRepository;
 import com.onlineLibrary.Online.service.service.BookService;
 
@@ -22,39 +24,39 @@ public class BookServiceImpl implements BookService {
     public Book addBook(Book book) {
 
         if (bookRepository.existsByTitle(book.getTitle())) {
-            throw new RuntimeException("Book already exists");
+            throw new BadRequestException("Book already exists");
         }
 
         return bookRepository.save(book);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Book> getBookById(Integer id) {
-
         return bookRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getAllBooks() {
-
         return bookRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> searchBooksByTitle(String keyword) {
-
         return bookRepository.findByTitleContaining(keyword);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getBooksByCategory(Integer categoryId) {
-
         return bookRepository.findByCategoriesId(categoryId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getBooksByAuthor(Integer authorId) {
-
         return bookRepository.findByAuthorsId(authorId);
     }
 
@@ -62,7 +64,7 @@ public class BookServiceImpl implements BookService {
     public Book updateBook(Integer id, Book book) {
 
         Book oldBook = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new NotFoundException("Book not found"));
 
         oldBook.setTitle(book.getTitle());
         oldBook.setDescription(book.getDescription());
@@ -77,7 +79,7 @@ public class BookServiceImpl implements BookService {
     public void deleteBook(Integer id) {
 
         if (!bookRepository.existsById(id)) {
-            throw new RuntimeException("Book not found");
+            throw new NotFoundException("Book not found");
         }
 
         bookRepository.deleteById(id);

@@ -1,6 +1,8 @@
 package com.onlineLibrary.Online.service.service.impl;
 
 import com.onlineLibrary.Online.service.entity.Author;
+import com.onlineLibrary.Online.service.exception.BadRequestException;
+import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.repository.AuthorRepository;
 import com.onlineLibrary.Online.service.service.AuthorService;
 
@@ -22,7 +24,7 @@ public class AuthorServiceImpl implements AuthorService {
     public Author addAuthor(Author author) {
 
         if (authorRepository.existsByAuthorName(author.getAuthorName())) {
-            throw new RuntimeException("Author already exists");
+            throw new BadRequestException("Author already exists");
         }
 
         return authorRepository.save(author);
@@ -35,6 +37,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Author> getAllAuthors() {
 
         return authorRepository.findAll();
@@ -51,7 +54,7 @@ public class AuthorServiceImpl implements AuthorService {
     public Author updateAuthor(Integer id, Author author) {
 
         Author oldAuthor = authorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new NotFoundException("Author not found"));
 
         oldAuthor.setAuthorName(author.getAuthorName());
         oldAuthor.setBiography(author.getBiography());
@@ -65,7 +68,7 @@ public class AuthorServiceImpl implements AuthorService {
     public void deleteAuthor(Integer id) {
 
         if (!authorRepository.existsById(id)) {
-            throw new RuntimeException("Author not found");
+            throw new NotFoundException("Author not found");
         }
 
         authorRepository.deleteById(id);
