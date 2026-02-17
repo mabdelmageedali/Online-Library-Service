@@ -83,7 +83,6 @@ public class BookController {
     public ResponseEntity<BookResponseDTO> updateBook(
             @PathVariable Integer id,
             @Valid @ModelAttribute BookUpdateDTO dto) {
-        // TODO: Check ownership in service layer (Author can only update his own books)
         BookResponseDTO response = bookService.updateBook(id, dto);
         return ResponseEntity.ok(response);
     }
@@ -91,16 +90,15 @@ public class BookController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('AUTHOR', 'ADMIN')")
     public ResponseEntity<Void> deleteBook(@PathVariable Integer id) {
-        // TODO: Check ownership in service layer (Author can only delete his own books)
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
 
-    @DeleteMapping("/{id}/force")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> forceDeleteBook(@PathVariable Integer id) {
-        bookService.deleteBook(id);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{id}/force")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> forceDeleteBook(@PathVariable Integer id) {
+//        bookService.deleteBook(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }

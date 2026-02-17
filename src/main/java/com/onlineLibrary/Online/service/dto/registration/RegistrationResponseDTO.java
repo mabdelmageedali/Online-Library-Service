@@ -14,13 +14,9 @@ public record RegistrationResponseDTO(
         String phoneNumber,
         Role   role,
         LocalDateTime registeredAt,
-
-
         Integer profileId,
         String  biography,
         LocalDateTime birthDate,
         LocalDateTime joinDate,
-
-
         Integer authorId
 ) {}

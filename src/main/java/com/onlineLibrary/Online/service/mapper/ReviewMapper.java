@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {UserMapper.class, BookMapper.class})
 public interface ReviewMapper {
 
-    // Entity -> DTOs
     ReviewResponseDTO toResponseDTO(Review review);
 
     ReviewSummaryDTO toSummaryDTO(Review review);
@@ -21,14 +20,12 @@ public interface ReviewMapper {
 
     List<ReviewSummaryDTO> toSummaryDTOList(List<Review> reviews);
 
-    // DTOs -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "user", ignore = true) // Will be set from authenticated user
     @Mapping(target = "book", ignore = true) // Will be set from bookId
     Review toEntity(ReviewRequestDTO dto);
 
-    // Update Entity from DTO (only non-null fields)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

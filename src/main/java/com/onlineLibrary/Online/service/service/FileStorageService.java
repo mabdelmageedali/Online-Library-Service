@@ -35,20 +35,16 @@ public class FileStorageService {
         String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
-            // Check for invalid path
             if (originalFilename.contains("..")) {
                 throw new FileStorageException("Invalid path sequence in filename: " + originalFilename);
             }
 
-            // Generate unique filename
             String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
 
-            // Create folder if not exists
             Path folderPath = this.fileStorageLocation.resolve(folder);
             Files.createDirectories(folderPath);
 
-            // Copy file to target location
             Path targetLocation = folderPath.resolve(uniqueFilename);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 

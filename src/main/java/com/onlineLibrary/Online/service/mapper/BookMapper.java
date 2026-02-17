@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {AuthorMapper.class, CategoryMapper.class})
 public interface BookMapper {
 
-    // Entity -> DTOs
     @Mapping(target = "downloadUrl", ignore = true) // Will be set manually in service
     BookResponseDTO toResponseDTO(Book book);
 
@@ -22,7 +21,6 @@ public interface BookMapper {
 
     List<BookSummaryDTO> toSummaryDTOList(List<Book> books);
 
-    // DTOs -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "filePath", ignore = true)
     @Mapping(target = "fileType", ignore = true)
@@ -34,7 +32,6 @@ public interface BookMapper {
     @Mapping(target = "categories", ignore = true)
     Book toEntity(BookRequestDTO dto);
 
-    // Update Entity from DTO (only non-null fields)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "filePath", ignore = true)

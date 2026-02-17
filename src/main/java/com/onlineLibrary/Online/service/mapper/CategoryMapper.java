@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
 
-    // Entity -> DTOs
     @Mapping(target = "books", ignore = true) // Avoid circular dependency
     CategoryResponseDTO toResponseDTO(Category category);
 
@@ -22,12 +21,10 @@ public interface CategoryMapper {
 
     List<CategorySummaryDTO> toSummaryDTOList(List<Category> categories);
 
-    // DTOs -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "books", ignore = true)
     Category toEntity(CategoryRequestDTO dto);
 
-    // Update Entity from DTO (only non-null fields)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "books", ignore = true)

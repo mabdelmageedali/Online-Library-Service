@@ -45,10 +45,8 @@ public class RegistrationController {
             @PathVariable Integer userId,
             @Valid @RequestBody ProfileUpdateDTO dto) {
 
-        // Delegate the update to the existing ProfileService (no duplication)
         profileService.updateProfile(userId, dto);
 
-        // Re-fetch and return the role-aware view
         ProfileWithRoleDTO response = profileService.getProfileWithRoleByUserId(userId);
         return ResponseEntity.ok(response);
     }

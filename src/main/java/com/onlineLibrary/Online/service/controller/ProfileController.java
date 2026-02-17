@@ -19,7 +19,6 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    // Create profile for user
     @PostMapping("/user/{userId}")
     public ResponseEntity<ProfileResponseDTO> createProfile(
             @PathVariable Integer userId,
@@ -28,14 +27,12 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Get profile by user id
     @GetMapping("/user/{userId}")
     public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable Integer userId) {
         ProfileResponseDTO response = profileService.getProfileByUserId(userId);
         return ResponseEntity.ok(response);
     }
 
-    // Update profile
     @PutMapping("/user/{userId}")
     public ResponseEntity<ProfileResponseDTO> updateProfile(
             @PathVariable Integer userId,
@@ -44,7 +41,6 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete profile
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<Void> deleteProfile(@PathVariable Integer userId) {
         profileService.deleteProfile(userId);

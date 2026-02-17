@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO register(UserRegistrationDTO dto) {
-        // Check password matching
+
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Password and confirm password do not match");
         }
@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        // Set default role as USER
         if (user.getRole() == null) {
             user.setRole(Role.ROLE_USER);
         }
@@ -87,24 +86,20 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
-        // Check email uniqueness if changed
         if (dto.getEmail() != null && !user.getEmail().equals(dto.getEmail())) {
             if (userRepository.existsByEmail(dto.getEmail())) {
                 throw new BadRequestException("Email already exists: " + dto.getEmail());
             }
         }
 
-        // Check phone uniqueness if changed
         if (dto.getPhoneNumber() != null && !user.getPhoneNumber().equals(dto.getPhoneNumber())) {
             if (userRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
                 throw new BadRequestException("Phone number already exists: " + dto.getPhoneNumber());
             }
         }
 
-        // Update basic fields using mapper
         userMapper.updateEntityFromDTO(dto, user);
 
-        // Handle password change
         if (dto.getCurrentPassword() != null && dto.getNewPassword() != null) {
             if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
                 throw new BadRequestException("Current password is incorrect");

@@ -39,25 +39,20 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponseDTO createBook(BookRequestDTO dto) {
-        // Validate file
         validateBookFile(dto.getBookFile());
 
-        // Check if book already exists
         if (bookRepository.existsByTitle(dto.getTitle())) {
             throw new BadRequestException("Book already exists with title: " + dto.getTitle());
         }
 
-        // Store file
         String filePath = fileStorageService.storeFile(dto.getBookFile(), "books");
         FileType fileType = FileType.fromMimeType(dto.getBookFile().getContentType());
 
-        // Create book entity
         Book book = bookMapper.toEntity(dto);
         book.setFilePath(filePath);
         book.setFileType(fileType);
         book.setFileSize(dto.getBookFile().getSize());
 
-        // Set authors from authorIds
         if (dto.getAuthorIds() != null && !dto.getAuthorIds().isEmpty()) {
             List<Author> authors = authorRepository.findAllById(dto.getAuthorIds());
             if (authors.size() != dto.getAuthorIds().size()) {
@@ -66,7 +61,6 @@ public class BookServiceImpl implements BookService {
             book.setAuthors(authors);
         }
 
-        // Set categories from categoryIds (optional)
         if (dto.getCategoryIds() != null && !dto.getCategoryIds().isEmpty()) {
             List<Category> categories = categoryRepository.findAllById(dto.getCategoryIds());
             book.setCategories(categories);
@@ -123,19 +117,15 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
 
-        // Update using mapper
         bookMapper.updateEntityFromDTO(dto, book);
 
-        // Update file if provided
         if (dto.getBookFile() != null && !dto.getBookFile().isEmpty()) {
             validateBookFile(dto.getBookFile());
 
-            // Delete old file
             if (book.getFilePath() != null) {
                 fileStorageService.deleteFile(book.getFilePath());
             }
 
-            // Store new file
             String newFilePath = fileStorageService.storeFile(dto.getBookFile(), "books");
             FileType newFileType = FileType.fromMimeType(dto.getBookFile().getContentType());
 
@@ -153,7 +143,6 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
 
-        // Delete file
         if (book.getFilePath() != null) {
             fileStorageService.deleteFile(book.getFilePath());
         }
@@ -185,18 +174,15 @@ public class BookServiceImpl implements BookService {
             throw new BadRequestException("Book file is required");
         }
 
-        // Check file size
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new BadRequestException("File size must not exceed 10MB");
         }
 
-        // Check content type
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
             throw new BadRequestException("Only PDF and HTML files are allowed");
         }
 
-        // Check extension
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new BadRequestException("Invalid filename");

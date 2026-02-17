@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AuthorMapper {
 
-    // Entity -> DTOs
+
     @Mapping(target = "authorName", source = "authorName")
     @Mapping(target = "bio", source = "bio")
     AuthorResponseDTO toResponseDTO(Author author);
@@ -25,12 +25,10 @@ public interface AuthorMapper {
 
     List<AuthorSummaryDTO> toSummaryDTOList(List<Author> authors);
 
-    // DTOs -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "books", ignore = true)
     Author toEntity(AuthorRequestDTO dto);
 
-    // Update Entity from DTO (only non-null fields)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "books", ignore = true)

@@ -12,25 +12,18 @@ import java.util.List;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
-    // Search by title (partial match)
     List<Book> findByTitleContaining(String keyword);
 
-    // Filter by language
     List<Book> findByLanguage(String language);
 
-    // Get books by category
     List<Book> findByCategoriesId(Integer categoryId);
 
-    // Get books by author
     List<Book> findByAuthorsId(Integer authorId);
 
-    // Check if book exists
     Boolean existsByTitle(String title);
 
-    // Get books by author (corrected)
     List<Book> findByAuthorsContaining(Author author);
 
-    // Optional: Search books by title or author name
     @Query("SELECT DISTINCT b FROM Book b LEFT JOIN b.authors a WHERE " +
             "LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(a.authorName) LIKE LOWER(CONCAT('%', :keyword, '%'))")

@@ -51,10 +51,7 @@ public class ProfileServiceImpl implements ProfileService {
         return profileMapper.toResponseDTO(profile);
     }
 
-    /**
-     * Returns the profile enriched with the user's Role, so the profile page
-     * can adapt its layout based on whether the viewer is a USER or AUTHOR.
-     */
+
     @Override
     @Transactional(readOnly = true)
     public ProfileWithRoleDTO getProfileWithRoleByUserId(Integer userId) {

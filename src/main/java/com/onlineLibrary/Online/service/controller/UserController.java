@@ -19,34 +19,29 @@ public class UserController {
 
     private final UserService userService;
 
-    // Register
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegistrationDTO dto) {
         UserResponseDTO response = userService.register(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Login
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserLoginDTO dto) {
         UserResponseDTO response = userService.login(dto);
         return ResponseEntity.ok(response);
     }
 
-    // Get user by id (with full details)
     @GetMapping("/{id}")
     public ResponseEntity<UserDetailsDTO> getUser(@PathVariable Integer id) {
         UserDetailsDTO response = userService.getUserById(id);
         return ResponseEntity.ok(response);
     }
 
-    // Get all users (Admin)
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // Update user
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(
             @PathVariable Integer id,
@@ -55,7 +50,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
@@ -68,7 +62,6 @@ public class UserController {
         return ResponseEntity.ok(userService.isEmailTaken(email));
     }
 
-    // Check if phone is taken
     @GetMapping("/check-phone")
     public ResponseEntity<Boolean> checkPhone(@RequestParam String phoneNumber) {
         return ResponseEntity.ok(userService.isPhoneTaken(phoneNumber));

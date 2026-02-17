@@ -9,7 +9,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    // Entity -> DTOs
     UserResponseDTO toResponseDTO(User user);
 
     UserSummaryDTO toSummaryDTO(User user);
@@ -25,7 +24,6 @@ public interface UserMapper {
 
     List<UserSummaryDTO> toSummaryDTOList(List<User> users);
 
-    // DTOs -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -36,7 +34,6 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true) // Will be encoded separately
     User toEntity(UserRegistrationDTO dto);
 
-    // Update Entity from DTO (only non-null fields)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true) // Password updated separately

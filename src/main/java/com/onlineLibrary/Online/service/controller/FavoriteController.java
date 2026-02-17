@@ -19,7 +19,6 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    // Add book to favorites
     @PostMapping("/user/{userId}")
     public ResponseEntity<FavoriteResponseDTO> addToFavorites(
             @PathVariable Integer userId,
@@ -28,7 +27,6 @@ public class FavoriteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Remove book from favorites
     @DeleteMapping("/user/{userId}/book/{bookId}")
     public ResponseEntity<Void> removeFromFavorites(
             @PathVariable Integer userId,
@@ -37,13 +35,11 @@ public class FavoriteController {
         return ResponseEntity.noContent().build();
     }
 
-    // Get user favorites
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FavoriteResponseDTO>> getUserFavorites(@PathVariable Integer userId) {
         return ResponseEntity.ok(favoriteService.getUserFavorites(userId));
     }
 
-    // Check if book is favorite
     @GetMapping("/check/user/{userId}/book/{bookId}")
     public ResponseEntity<Boolean> isBookFavorite(
             @PathVariable Integer userId,

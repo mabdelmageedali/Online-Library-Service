@@ -21,7 +21,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // Add new review
     @PostMapping("/user/{userId}")
     public ResponseEntity<ReviewResponseDTO> addReview(
             @PathVariable Integer userId,
@@ -30,7 +29,6 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Update review
     @PutMapping("/user/{userId}/book/{bookId}")
     public ResponseEntity<ReviewResponseDTO> updateReview(
             @PathVariable Integer userId,
@@ -40,7 +38,6 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete review
     @DeleteMapping("/user/{userId}/book/{bookId}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable Integer userId,
@@ -49,19 +46,17 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    // Get reviews of a book
     @GetMapping("/book/{bookId}")
     public ResponseEntity<List<ReviewResponseDTO>> getBookReviews(@PathVariable Integer bookId) {
         return ResponseEntity.ok(reviewService.getBookReviews(bookId));
     }
 
-    // Get reviews of a user
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReviewResponseDTO>> getUserReviews(@PathVariable Integer userId) {
         return ResponseEntity.ok(reviewService.getUserReviews(userId));
     }
 
-    // Get average rating of a book
+
     @GetMapping("/average/book/{bookId}")
     public ResponseEntity<Double> getAverageRating(@PathVariable Integer bookId) {
         Double avg = reviewService.getAverageRating(bookId);
