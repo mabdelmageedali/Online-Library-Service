@@ -1,7 +1,8 @@
 package com.onlineLibrary.Online.service.controller;
 
-import com.onlineLibrary.Online.service.entity.Profile;
-import com.onlineLibrary.Online.service.exception.NotFoundException;
+import com.onlineLibrary.Online.service.dto.profile.ProfileRequestDTO;
+import com.onlineLibrary.Online.service.dto.profile.ProfileResponseDTO;
+import com.onlineLibrary.Online.service.dto.profile.ProfileUpdateDTO;
 import com.onlineLibrary.Online.service.service.ProfileService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,51 +20,34 @@ public class ProfileController {
     private final ProfileService profileService;
 
     // Create profile for user
-    @PostMapping("/{userId}")
-    public ResponseEntity<Profile> createProfile(
+    @PostMapping("/user/{userId}")
+    public ResponseEntity<ProfileResponseDTO> createProfile(
             @PathVariable Integer userId,
-            @Valid @RequestBody Profile profile
-    ) {
-
-        Profile savedProfile =
-                profileService.createProfile(userId, profile);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProfile);
+            @Valid @RequestBody ProfileRequestDTO dto) {
+        ProfileResponseDTO response = profileService.createProfile(userId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Get profile by user id
-    @GetMapping("/{userId}")
-    public ResponseEntity<Profile> getProfile(
-            @PathVariable Integer userId
-    ) {
-
-        Profile profile = profileService.getProfileByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Profile not found"));
-
-        return ResponseEntity.ok(profile);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable Integer userId) {
+        ProfileResponseDTO response = profileService.getProfileByUserId(userId);
+        return ResponseEntity.ok(response);
     }
 
     // Update profile
-    @PutMapping("/{userId}")
-    public ResponseEntity<Profile> updateProfile(
+    @PutMapping("/user/{userId}")
+    public ResponseEntity<ProfileResponseDTO> updateProfile(
             @PathVariable Integer userId,
-            @Valid @RequestBody Profile profile
-    ) {
-
-        Profile updatedProfile =
-                profileService.updateProfile(userId, profile);
-
-        return ResponseEntity.ok(updatedProfile);
+            @Valid @RequestBody ProfileUpdateDTO dto) {
+        ProfileResponseDTO response = profileService.updateProfile(userId, dto);
+        return ResponseEntity.ok(response);
     }
 
     // Delete profile
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteProfile(
-            @PathVariable Integer userId
-    ) {
-
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<Void> deleteProfile(@PathVariable Integer userId) {
         profileService.deleteProfile(userId);
-
         return ResponseEntity.noContent().build();
     }
 }

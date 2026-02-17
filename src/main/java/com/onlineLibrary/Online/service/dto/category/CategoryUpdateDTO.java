@@ -13,7 +13,6 @@ import lombok.Setter;
 @Setter
 public class CategoryUpdateDTO {
 
-    @NotBlank(message = "Category name is required")
     private String categoryName;
 
     private String categoryDescription;

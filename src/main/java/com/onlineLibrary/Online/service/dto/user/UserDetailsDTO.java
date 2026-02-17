@@ -6,11 +6,15 @@ import java.time.LocalDateTime;
 
 public record UserDetailsDTO(
         Integer id,
+        String firstName,
+        String lastName,
         String email,
         String phoneNumber,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        ProfileResponseDTO useProfileData,
+        String biography,
+        LocalDateTime birthDate,
+        LocalDateTime joinDate,
         Integer totalFavorites,
         Integer totalReviews
 ) {

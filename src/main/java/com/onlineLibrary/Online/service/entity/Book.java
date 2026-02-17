@@ -2,6 +2,7 @@ package com.onlineLibrary.Online.service.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.onlineLibrary.Online.service.enums.FileType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PastOrPresent;
@@ -25,15 +26,25 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = true)
-    private String description; // user can ignore typing a description for the book
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false)
     private String language;
 
     @Column(nullable = false)
-    @Min(value = 1, message = "\"Page count must be at least 1")
+    @Min(value = 1, message = "Page count must be at least 1")
     private Integer pagesCount;
+
+
+    @Column(nullable = false)
+    private String filePath;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FileType fileType;
+
+    private Long fileSize;
 
 
     @Column(nullable = false)
@@ -67,6 +78,4 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
-
-
 }

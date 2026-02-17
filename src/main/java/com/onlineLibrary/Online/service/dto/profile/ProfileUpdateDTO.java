@@ -16,18 +16,10 @@ import java.time.LocalDateTime;
 @Getter
 public class ProfileUpdateDTO {
 
-    @NotBlank(message = "First name is required")
-    private String firstName;
-
-    @NotBlank(message = "last name is required")
-    private String lastName;
-
     private String biography;
 
     @Past(message = "Birth date must be in the past")
-
     @NotNull(message = "Birth date is required")
-    @Past(message = "Birth date must be in the past")
     private LocalDateTime birthDate;
 
 }

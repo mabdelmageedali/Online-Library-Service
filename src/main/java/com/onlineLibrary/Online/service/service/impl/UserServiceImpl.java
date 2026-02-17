@@ -1,9 +1,12 @@
 package com.onlineLibrary.Online.service.service.impl;
 
+import com.onlineLibrary.Online.service.dto.user.*;
 import com.onlineLibrary.Online.service.entity.User;
+import com.onlineLibrary.Online.service.enums.Role;
 import com.onlineLibrary.Online.service.exception.BadRequestException;
 import com.onlineLibrary.Online.service.exception.NotFoundException;
 import com.onlineLibrary.Online.service.exception.UnauthorizedException;
+import com.onlineLibrary.Online.service.mapper.UserMapper;
 import com.onlineLibrary.Online.service.repository.UserRepository;
 import com.onlineLibrary.Online.service.service.UserService;
 
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,114 +25,115 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
-    // Register
     @Override
-    public User register(User user) {
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new BadRequestException("Email already exists");
+    public UserResponseDTO register(UserRegistrationDTO dto) {
+        // Check password matching
+        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+            throw new BadRequestException("Password and confirm password do not match");
         }
 
-        if (userRepository.existsByPhoneNumber(user.getPhoneNumber())) {
-            throw new BadRequestException("Phone number already exists");
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new BadRequestException("Email already exists: " + dto.getEmail());
         }
 
-        if (user.getPassword() == null || user.getPassword().isBlank()) {
-            throw new BadRequestException("Password is required");
+        if (userRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
+            throw new BadRequestException("Phone number already exists: " + dto.getPhoneNumber());
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = userMapper.toEntity(dto);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        return userRepository.save(user);
+        // Set default role as USER
+        if (user.getRole() == null) {
+            user.setRole(Role.ROLE_USER);
+        }
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toResponseDTO(savedUser);
     }
 
-    // Login
     @Override
     @Transactional(readOnly = true)
-    public User login(String email, String password) {
+    public UserResponseDTO login(UserLoginDTO dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UnauthorizedException("Invalid email or password"));
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        return user;
+        return userMapper.toResponseDTO(user);
     }
 
-    // Get by id
     @Override
     @Transactional(readOnly = true)
-    public Optional<User> getUserById(Integer id) {
-
-        return userRepository.findById(id);
+    public UserDetailsDTO getUserById(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        return userMapper.toDetailsDTO(user);
     }
 
-    // Get all
     @Override
     @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toResponseDTOList(users);
     }
 
-    // Update
     @Override
-    public User updateUser(Integer id, User user) {
+    public UserResponseDTO updateUser(Integer id, UserUpdateDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
-        User oldUser = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new NotFoundException("User not found"));
-
-        if (!oldUser.getEmail().equals(user.getEmail())
-                && userRepository.existsByEmail(user.getEmail())) {
-            throw new BadRequestException("Email already exists");
+        // Check email uniqueness if changed
+        if (dto.getEmail() != null && !user.getEmail().equals(dto.getEmail())) {
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new BadRequestException("Email already exists: " + dto.getEmail());
+            }
         }
 
-        if (!oldUser.getPhoneNumber().equals(user.getPhoneNumber())
-                && userRepository.existsByPhoneNumber(user.getPhoneNumber())) {
-            throw new BadRequestException("Phone number already exists");
+        // Check phone uniqueness if changed
+        if (dto.getPhoneNumber() != null && !user.getPhoneNumber().equals(dto.getPhoneNumber())) {
+            if (userRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
+                throw new BadRequestException("Phone number already exists: " + dto.getPhoneNumber());
+            }
         }
 
-        oldUser.setEmail(user.getEmail());
-        oldUser.setPhoneNumber(user.getPhoneNumber());
+        // Update basic fields using mapper
+        userMapper.updateEntityFromDTO(dto, user);
 
-        if (user.getPassword() != null && !user.getPassword().isBlank()) {
-            oldUser.setPassword(
-                    passwordEncoder.encode(user.getPassword())
-            );
+        // Handle password change
+        if (dto.getCurrentPassword() != null && dto.getNewPassword() != null) {
+            if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
+                throw new BadRequestException("Current password is incorrect");
+            }
+            user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         }
 
-        return userRepository.save(oldUser);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toResponseDTO(updatedUser);
     }
 
-    // Delete
     @Override
     public void deleteUser(Integer id) {
-
         if (!userRepository.existsById(id)) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("User not found with id: " + id);
         }
 
         userRepository.deleteById(id);
     }
 
-    // Check email
     @Override
     @Transactional(readOnly = true)
     public Boolean isEmailTaken(String email) {
-
         return userRepository.existsByEmail(email);
     }
 
-    // Check phone
     @Override
     @Transactional(readOnly = true)
     public Boolean isPhoneTaken(String phoneNumber) {
-
         return userRepository.existsByPhoneNumber(phoneNumber);
     }
 }

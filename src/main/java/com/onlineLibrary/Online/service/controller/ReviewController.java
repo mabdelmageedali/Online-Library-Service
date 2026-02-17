@@ -1,6 +1,8 @@
 package com.onlineLibrary.Online.service.controller;
 
-import com.onlineLibrary.Online.service.entity.Review;
+import com.onlineLibrary.Online.service.dto.review.ReviewRequestDTO;
+import com.onlineLibrary.Online.service.dto.review.ReviewResponseDTO;
+import com.onlineLibrary.Online.service.dto.review.ReviewUpdateDTO;
 import com.onlineLibrary.Online.service.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,75 +22,49 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // Add new review
-    @PostMapping("/{userId}/{bookId}")
-    public ResponseEntity<Review> addReview(
+    @PostMapping("/user/{userId}")
+    public ResponseEntity<ReviewResponseDTO> addReview(
             @PathVariable Integer userId,
-            @PathVariable Integer bookId,
-            @Valid @RequestBody Review review
-    ) {
-
-        Review savedReview =
-                reviewService.addReview(userId, bookId, review);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedReview);
+            @Valid @RequestBody ReviewRequestDTO dto) {
+        ReviewResponseDTO response = reviewService.addReview(userId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Update review
-    @PutMapping("/{userId}/{bookId}")
-    public ResponseEntity<Review> updateReview(
+    @PutMapping("/user/{userId}/book/{bookId}")
+    public ResponseEntity<ReviewResponseDTO> updateReview(
             @PathVariable Integer userId,
             @PathVariable Integer bookId,
-            @Valid @RequestBody Review review
-    ) {
-
-        Review updatedReview =
-                reviewService.updateReview(userId, bookId, review);
-
-        return ResponseEntity.ok(updatedReview);
+            @Valid @RequestBody ReviewUpdateDTO dto) {
+        ReviewResponseDTO response = reviewService.updateReview(userId, bookId, dto);
+        return ResponseEntity.ok(response);
     }
 
     // Delete review
-    @DeleteMapping("/{userId}/{bookId}")
+    @DeleteMapping("/user/{userId}/book/{bookId}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable Integer userId,
-            @PathVariable Integer bookId
-    ) {
-
+            @PathVariable Integer bookId) {
         reviewService.deleteReview(userId, bookId);
-
         return ResponseEntity.noContent().build();
     }
 
     // Get reviews of a book
     @GetMapping("/book/{bookId}")
-    public ResponseEntity<List<Review>> getBookReviews(
-            @PathVariable Integer bookId
-    ) {
-
-        return ResponseEntity.ok(
-                reviewService.getBookReviews(bookId)
-        );
+    public ResponseEntity<List<ReviewResponseDTO>> getBookReviews(@PathVariable Integer bookId) {
+        return ResponseEntity.ok(reviewService.getBookReviews(bookId));
     }
 
     // Get reviews of a user
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Review>> getUserReviews(
-            @PathVariable Integer userId
-    ) {
-
-        return ResponseEntity.ok(
-                reviewService.getUserReviews(userId)
-        );
+    public ResponseEntity<List<ReviewResponseDTO>> getUserReviews(@PathVariable Integer userId) {
+        return ResponseEntity.ok(reviewService.getUserReviews(userId));
     }
 
     // Get average rating of a book
-    @GetMapping("/average/{bookId}")
-    public ResponseEntity<Double> getAverageRating(
-            @PathVariable Integer bookId
-    ) {
-
+    @GetMapping("/average/book/{bookId}")
+    public ResponseEntity<Double> getAverageRating(@PathVariable Integer bookId) {
         Double avg = reviewService.getAverageRating(bookId);
-
         return ResponseEntity.ok(avg);
     }
 }

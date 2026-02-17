@@ -1,26 +1,28 @@
 package com.onlineLibrary.Online.service.service;
 
-import com.onlineLibrary.Online.service.entity.Author;
+import com.onlineLibrary.Online.service.dto.author.AuthorRequestDTO;
+import com.onlineLibrary.Online.service.dto.author.AuthorResponseDTO;
+import com.onlineLibrary.Online.service.dto.author.AuthorSummaryDTO;
+import com.onlineLibrary.Online.service.dto.author.AuthorUpdateDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AuthorService {
 
-    // Add new author
-    Author addAuthor(Author author);
+    // Create new author
+    AuthorResponseDTO createAuthor(AuthorRequestDTO dto);
 
     // Get author by ID
-    Optional<Author> getAuthorById(Integer id);
+    AuthorResponseDTO getAuthorById(Integer id);
 
     // Get all authors
-    List<Author> getAllAuthors();
+    List<AuthorResponseDTO> getAllAuthors();
 
     // Search authors by name
-    List<Author> searchAuthors(String keyword);
+    List<AuthorSummaryDTO> searchAuthors(String keyword);
 
     // Update author
-    Author updateAuthor(Integer id, Author author);
+    AuthorResponseDTO updateAuthor(Integer id, AuthorUpdateDTO dto);
 
     // Delete author
     void deleteAuthor(Integer id);

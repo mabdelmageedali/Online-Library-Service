@@ -1,4 +1,4 @@
-package com.onlineLibrary.Online.service.config;
+package com.onlineLibrary.Online.service.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

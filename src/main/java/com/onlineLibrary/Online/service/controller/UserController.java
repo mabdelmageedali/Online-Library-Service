@@ -1,8 +1,6 @@
 package com.onlineLibrary.Online.service.controller;
 
-import com.onlineLibrary.Online.service.entity.User;
-import com.onlineLibrary.Online.service.exception.BadRequestException;
-import com.onlineLibrary.Online.service.exception.NotFoundException;
+import com.onlineLibrary.Online.service.dto.user.*;
 import com.onlineLibrary.Online.service.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,60 +21,56 @@ public class UserController {
 
     // Register
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody User user) {
-
-        User savedUser = userService.register(user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegistrationDTO dto) {
+        UserResponseDTO response = userService.register(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // Login
     @PostMapping("/login")
-    public ResponseEntity<User> login(
-            @RequestParam String email,
-            @RequestParam String password
-
-    ) {
-
-        User user = userService.login(email, password);
-
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserLoginDTO dto) {
+        UserResponseDTO response = userService.login(dto);
+        return ResponseEntity.ok(response);
     }
 
-    // Get user by id
+    // Get user by id (with full details)
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Integer id) {
-
-        User user = userService.getUserById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDetailsDTO> getUser(@PathVariable Integer id) {
+        UserDetailsDTO response = userService.getUserById(id);
+        return ResponseEntity.ok(response);
     }
 
     // Get all users (Admin)
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // Update user
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
+    public ResponseEntity<UserResponseDTO> updateUser(
             @PathVariable Integer id,
-            @Valid @RequestBody User user
-    ) {
-
-        User updatedUser = userService.updateUser(id, user);
-
-        return ResponseEntity.ok(updatedUser);
+            @Valid @RequestBody UserUpdateDTO dto) {
+        UserResponseDTO response = userService.updateUser(id, dto);
+        return ResponseEntity.ok(response);
     }
 
     // Delete user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-
         userService.deleteUser(id);
-
         return ResponseEntity.noContent().build();
+    }
+
+    // Check if email is taken
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.isEmailTaken(email));
+    }
+
+    // Check if phone is taken
+    @GetMapping("/check-phone")
+    public ResponseEntity<Boolean> checkPhone(@RequestParam String phoneNumber) {
+        return ResponseEntity.ok(userService.isPhoneTaken(phoneNumber));
     }
 }

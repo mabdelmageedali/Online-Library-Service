@@ -1,7 +1,9 @@
 package com.onlineLibrary.Online.service.controller;
 
-import com.onlineLibrary.Online.service.entity.Category;
-import com.onlineLibrary.Online.service.exception.NotFoundException;
+import com.onlineLibrary.Online.service.dto.category.CategoryRequestDTO;
+import com.onlineLibrary.Online.service.dto.category.CategoryResponseDTO;
+import com.onlineLibrary.Online.service.dto.category.CategorySummaryDTO;
+import com.onlineLibrary.Online.service.dto.category.CategoryUpdateDTO;
 import com.onlineLibrary.Online.service.service.CategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,59 +22,45 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // Add new category
+    // Create new category
     @PostMapping
-    public ResponseEntity<Category> addCategory(@Valid @RequestBody Category category) {
-
-        Category savedCategory = categoryService.addCategory(category);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO dto) {
+        CategoryResponseDTO response = categoryService.createCategory(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Get category by id
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable Integer id) {
-
-        Category category = categoryService.getCategoryById(id)
-                .orElseThrow(() -> new NotFoundException("Category not found"));
-
-        return ResponseEntity.ok(category);
+    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable Integer id) {
+        CategoryResponseDTO response = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(response);
     }
 
     // Get all categories
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
-
+    public ResponseEntity<List<CategorySummaryDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     // Search categories by name
     @GetMapping("/search")
-    public ResponseEntity<List<Category>> searchCategories(
-            @RequestParam String keyword
-    ) {
-
+    public ResponseEntity<List<CategorySummaryDTO>> searchCategories(@RequestParam String keyword) {
         return ResponseEntity.ok(categoryService.searchCategories(keyword));
     }
 
     // Update category
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable Integer id,
-            @Valid @RequestBody Category category
-    ) {
-
-        Category updatedCategory = categoryService.updateCategory(id, category);
-
-        return ResponseEntity.ok(updatedCategory);
+            @Valid @RequestBody CategoryUpdateDTO dto) {
+        CategoryResponseDTO response = categoryService.updateCategory(id, dto);
+        return ResponseEntity.ok(response);
     }
 
     // Delete category
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Integer id) {
-
         categoryService.deleteCategory(id);
-
         return ResponseEntity.noContent().build();
     }
 }

@@ -21,17 +21,15 @@ public class Author {
     private String authorName;
 
     @Column(nullable = false)
-    private String biography;
+    private String bio;
 
     @Column(nullable = false)
     private LocalDateTime birthDate;
 
-    @Column(nullable = true)
     private LocalDateTime deathDate;
 
     @ManyToMany(mappedBy = "authors")
     @JsonBackReference
     private List<Book> books;
-
 
 }

@@ -12,11 +12,17 @@ import lombok.Setter;
 @Getter
 public class UserUpdateDTO {
 
-    @NotBlank(message = "Email is required")
+    private String firstName;
+
+    private String lastName;
+
     @Email(message = "Email should be valid")
     private String email;
 
-    @Pattern(regexp = "^[0-9]{11}$", message = "Phone number must contain 11 digits")
+    @Pattern(
+            regexp = "^01[0125][0-9]{8}$",
+            message = "Invalid phone number"
+    )
     private String phoneNumber;
 
     @Size(min = 6, message = "Password should be at least 6 characters")

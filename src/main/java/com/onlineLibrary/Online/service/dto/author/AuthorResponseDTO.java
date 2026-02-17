@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public record AuthorResponseDTO(
         Integer id,
         String authorName,
-        String biography,
+        String bio, // biography
         LocalDateTime birthDate,
         LocalDateTime deathDate
 ) {

@@ -1,5 +1,6 @@
 package com.onlineLibrary.Online.service.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.onlineLibrary.Online.service.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -21,12 +22,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
     @Column(nullable = false , unique = true)
     @Email(message = "Email should be valid")
     private String email;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must contain only digits")
+    @Pattern(
+            regexp = "^01[0125][0-9]{8}$",
+            message = "Invalid phone number"
+    )
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -38,7 +48,6 @@ public class User {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
@@ -53,4 +62,6 @@ public class User {
     @JsonIgnore
     private List<Review> reviews;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

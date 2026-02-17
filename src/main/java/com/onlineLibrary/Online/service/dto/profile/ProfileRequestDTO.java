@@ -1,6 +1,5 @@
 package com.onlineLibrary.Online.service.dto.profile;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
@@ -15,12 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class ProfileRequestDTO {
-
-    @NotBlank(message = "First name is required")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    private String lastName;
 
     private String biography;
 

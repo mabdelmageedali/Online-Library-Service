@@ -22,10 +22,8 @@ public class Review {
 
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
-    @Column(nullable = true)
     private Integer rating;
 
-    @Column(nullable = true)
     private String comment;
 
     @CreationTimestamp

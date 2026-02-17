@@ -19,7 +19,7 @@ public class AuthorRequestDTO {
     private String authorName;
 
     @NotBlank(message = "Author biography is required")
-    private String biography;
+    private String bio;
 
     @NotNull(message = "Author birth date is required")
     @Past(message = "Author birth date should be valid")

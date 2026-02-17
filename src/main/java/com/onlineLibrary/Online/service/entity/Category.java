@@ -22,7 +22,6 @@ public class Category {
     @Column(nullable = false)
     private String categoryName;
 
-    @Column(nullable = true)
     private String categoryDescription;
 
     @ManyToMany(mappedBy = "categories")

@@ -1,8 +1,13 @@
 package com.onlineLibrary.Online.service.service.impl;
 
+import com.onlineLibrary.Online.service.dto.author.AuthorRequestDTO;
+import com.onlineLibrary.Online.service.dto.author.AuthorResponseDTO;
+import com.onlineLibrary.Online.service.dto.author.AuthorSummaryDTO;
+import com.onlineLibrary.Online.service.dto.author.AuthorUpdateDTO;
 import com.onlineLibrary.Online.service.entity.Author;
 import com.onlineLibrary.Online.service.exception.BadRequestException;
 import com.onlineLibrary.Online.service.exception.NotFoundException;
+import com.onlineLibrary.Online.service.mapper.AuthorMapper;
 import com.onlineLibrary.Online.service.repository.AuthorRepository;
 import com.onlineLibrary.Online.service.service.AuthorService;
 
@@ -11,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -19,56 +23,55 @@ import java.util.Optional;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
     @Override
-    public Author addAuthor(Author author) {
-
-        if (authorRepository.existsByAuthorName(author.getAuthorName())) {
-            throw new BadRequestException("Author already exists");
+    public AuthorResponseDTO createAuthor(AuthorRequestDTO dto) {
+        if (authorRepository.existsByAuthorName(dto.getAuthorName())) {
+            throw new BadRequestException("Author already exists with name: " + dto.getAuthorName());
         }
 
-        return authorRepository.save(author);
-    }
-
-    @Override
-    public Optional<Author> getAuthorById(Integer id) {
-
-        return authorRepository.findById(id);
+        Author author = authorMapper.toEntity(dto);
+        Author savedAuthor = authorRepository.save(author);
+        return authorMapper.toResponseDTO(savedAuthor);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Author> getAllAuthors() {
-
-        return authorRepository.findAll();
+    public AuthorResponseDTO getAuthorById(Integer id) {
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Author not found with id: " + id));
+        return authorMapper.toResponseDTO(author);
     }
 
     @Override
-
-    public List<Author> searchAuthors(String keyword) {
-
-        return authorRepository.findByAuthorNameContaining(keyword);
+    @Transactional(readOnly = true)
+    public List<AuthorResponseDTO> getAllAuthors() {
+        List<Author> authors = authorRepository.findAll();
+        return authorMapper.toResponseDTOList(authors);
     }
 
     @Override
-    public Author updateAuthor(Integer id, Author author) {
+    @Transactional(readOnly = true)
+    public List<AuthorSummaryDTO> searchAuthors(String keyword) {
+        List<Author> authors = authorRepository.findByAuthorNameContaining(keyword);
+        return authorMapper.toSummaryDTOList(authors);
+    }
 
-        Author oldAuthor = authorRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Author not found"));
+    @Override
+    public AuthorResponseDTO updateAuthor(Integer id, AuthorUpdateDTO dto) {
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Author not found with id: " + id));
 
-        oldAuthor.setAuthorName(author.getAuthorName());
-        oldAuthor.setBiography(author.getBiography());
-        oldAuthor.setBirthDate(author.getBirthDate());
-        oldAuthor.setDeathDate(author.getDeathDate());
-
-        return authorRepository.save(oldAuthor);
+        authorMapper.updateEntityFromDTO(dto, author);
+        Author updatedAuthor = authorRepository.save(author);
+        return authorMapper.toResponseDTO(updatedAuthor);
     }
 
     @Override
     public void deleteAuthor(Integer id) {
-
         if (!authorRepository.existsById(id)) {
-            throw new NotFoundException("Author not found");
+            throw new NotFoundException("Author not found with id: " + id);
         }
 
         authorRepository.deleteById(id);

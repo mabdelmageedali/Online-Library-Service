@@ -1,26 +1,28 @@
 package com.onlineLibrary.Online.service.service;
 
-import com.onlineLibrary.Online.service.entity.Category;
+import com.onlineLibrary.Online.service.dto.category.CategoryRequestDTO;
+import com.onlineLibrary.Online.service.dto.category.CategoryResponseDTO;
+import com.onlineLibrary.Online.service.dto.category.CategorySummaryDTO;
+import com.onlineLibrary.Online.service.dto.category.CategoryUpdateDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryService {
 
-    // Add new category
-    Category addCategory(Category category);
+    // Create new category
+    CategoryResponseDTO createCategory(CategoryRequestDTO dto);
 
     // Get category by ID
-    Optional<Category> getCategoryById(Integer id);
+    CategoryResponseDTO getCategoryById(Integer id);
 
     // Get all categories
-    List<Category> getAllCategories();
+    List<CategorySummaryDTO> getAllCategories();
 
     // Search categories by name
-    List<Category> searchCategories(String keyword);
+    List<CategorySummaryDTO> searchCategories(String keyword);
 
     // Update category
-    Category updateCategory(Integer id, Category category);
+    CategoryResponseDTO updateCategory(Integer id, CategoryUpdateDTO dto);
 
     // Delete category
     void deleteCategory(Integer id);

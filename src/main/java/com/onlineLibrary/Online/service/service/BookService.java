@@ -1,33 +1,35 @@
 package com.onlineLibrary.Online.service.service;
 
-import com.onlineLibrary.Online.service.entity.Book;
+import com.onlineLibrary.Online.service.dto.book.*;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookService {
 
-    // Add new book
-    Book addBook(Book book);
+    // Create new book with file
+    BookResponseDTO createBook(BookRequestDTO dto);
 
     // Get book by ID
-    Optional<Book> getBookById(Integer id);
+    BookResponseDTO getBookById(Integer id);
 
     // Get all books
-    List<Book> getAllBooks();
+    List<BookResponseDTO> getAllBooks();
 
     // Search books by title
-    List<Book> searchBooksByTitle(String keyword);
+    List<BookSummaryDTO> searchBooksByTitle(String keyword);
 
     // Get books by category
-    List<Book> getBooksByCategory(Integer categoryId);
+    List<BookSummaryDTO> getBooksByCategory(Integer categoryId);
 
     // Get books by author
-    List<Book> getBooksByAuthor(Integer authorId);
+    List<BookSummaryDTO> getBooksByAuthor(Integer authorId);
 
-    // Update book data
-    Book updateBook(Integer id, Book book);
+    // Update book
+    BookResponseDTO updateBook(Integer id, BookUpdateDTO dto);
 
     // Delete book
     void deleteBook(Integer id);
+
+    // Download book file
+    FileDownloadResponse downloadBook(Integer id);
 }

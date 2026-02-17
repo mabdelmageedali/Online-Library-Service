@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,5 +38,8 @@ public class BookRequestDTO {
     private List<Integer> authorIds;
 
     private List<Integer> categoryIds;
+
+    @NotNull(message = "Book file is required")
+    private MultipartFile bookFile;
 
 }

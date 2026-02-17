@@ -1,17 +1,14 @@
 package com.onlineLibrary.Online.service.controller;
 
-import com.onlineLibrary.Online.service.entity.Book;
-import com.onlineLibrary.Online.service.exception.NotFoundException;
+import com.onlineLibrary.Online.service.dto.book.*;
 import com.onlineLibrary.Online.service.service.BookService;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/books")
@@ -20,81 +17,90 @@ public class BookController {
 
     private final BookService bookService;
 
-    // Add new book
-    @PostMapping
-    public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
 
-        Book savedBook = bookService.addBook(book);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
-    }
-
-    // Get book by id
-    @GetMapping("/{id}")
-    public ResponseEntity<Book> getBook(@PathVariable Integer id) {
-
-        Book book = bookService.getBookById(id)
-                .orElseThrow(() -> new NotFoundException("Book not found"));
-
-        return ResponseEntity.ok(book);
-    }
-
-    // Get all books
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-
+    public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
-    // Search by title
-    @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBooks(
-            @RequestParam String keyword
-    ) {
+    @GetMapping("/{id}")
+    public ResponseEntity<BookResponseDTO> getBook(@PathVariable Integer id) {
+        BookResponseDTO response = bookService.getBookById(id);
+        return ResponseEntity.ok(response);
+    }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<BookSummaryDTO>> searchBooks(@RequestParam String keyword) {
         return ResponseEntity.ok(bookService.searchBooksByTitle(keyword));
     }
 
-    // Get books by category
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Book>> getBooksByCategory(
-            @PathVariable Integer categoryId
-    ) {
-
-        return ResponseEntity.ok(
-                bookService.getBooksByCategory(categoryId)
-        );
+    public ResponseEntity<List<BookSummaryDTO>> getBooksByCategory(@PathVariable Integer categoryId) {
+        return ResponseEntity.ok(bookService.getBooksByCategory(categoryId));
     }
 
-    // Get books by author
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<Book>> getBooksByAuthor(
-            @PathVariable Integer authorId
-    ) {
-
-        return ResponseEntity.ok(
-                bookService.getBooksByAuthor(authorId)
-        );
+    public ResponseEntity<List<BookSummaryDTO>> getBooksByAuthor(@PathVariable Integer authorId) {
+        return ResponseEntity.ok(bookService.getBooksByAuthor(authorId));
     }
 
-    // Update book
-    @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(
+
+    @GetMapping("/{id}/download")
+    @PreAuthorize("hasAnyRole('USER', 'AUTHOR', 'ADMIN')")
+    public ResponseEntity<Resource> downloadBook(@PathVariable Integer id) {
+        FileDownloadResponse response = bookService.downloadBook(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(response.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + response.getFilename() + "\"")
+                .body(response.getResource());
+    }
+
+    @GetMapping("/{id}/read")
+    @PreAuthorize("hasAnyRole('USER', 'AUTHOR', 'ADMIN')")
+    public ResponseEntity<Resource> readBook(@PathVariable Integer id) {
+        FileDownloadResponse response = bookService.downloadBook(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(response.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + response.getFilename() + "\"")
+                .body(response.getResource());
+    }
+
+
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('AUTHOR')")
+    public ResponseEntity<BookResponseDTO> createBook(@Valid @ModelAttribute BookRequestDTO dto) {
+        BookResponseDTO response = bookService.createBook(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('AUTHOR', 'ADMIN')")
+    public ResponseEntity<BookResponseDTO> updateBook(
             @PathVariable Integer id,
-            @Valid @RequestBody Book book
-    ) {
-
-        Book updatedBook = bookService.updateBook(id, book);
-
-        return ResponseEntity.ok(updatedBook);
+            @Valid @ModelAttribute BookUpdateDTO dto) {
+        // TODO: Check ownership in service layer (Author can only update his own books)
+        BookResponseDTO response = bookService.updateBook(id, dto);
+        return ResponseEntity.ok(response);
     }
 
-    // Delete book
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('AUTHOR', 'ADMIN')")
     public ResponseEntity<Void> deleteBook(@PathVariable Integer id) {
-
+        // TODO: Check ownership in service layer (Author can only delete his own books)
         bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
+    }
 
+
+    @DeleteMapping("/{id}/force")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> forceDeleteBook(@PathVariable Integer id) {
+        bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 }

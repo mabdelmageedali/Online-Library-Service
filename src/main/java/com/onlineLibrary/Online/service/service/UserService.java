@@ -1,26 +1,25 @@
 package com.onlineLibrary.Online.service.service;
 
-import com.onlineLibrary.Online.service.entity.User;
+import com.onlineLibrary.Online.service.dto.user.*;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
-    // Register
-    User register(User user);
+    // Register new user
+    UserResponseDTO register(UserRegistrationDTO dto);
 
     // Login
-    User login(String email, String password);
+    UserResponseDTO login(UserLoginDTO dto);
 
-    // Get user by ID
-    Optional<User> getUserById(Integer id);
+    // Get user by ID (with full details)
+    UserDetailsDTO getUserById(Integer id);
 
     // Get all users
-    List<User> getAllUsers();
+    List<UserResponseDTO> getAllUsers();
 
     // Update user information
-    User updateUser(Integer id, User user);
+    UserResponseDTO updateUser(Integer id, UserUpdateDTO dto);
 
     // Delete user account
     void deleteUser(Integer id);
